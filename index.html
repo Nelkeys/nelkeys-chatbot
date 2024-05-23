@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#12101a">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="/css/index.css">
+    <title>Nelkeys AI Chatbot</title>
+</head>
+
+<body>
+    <section class="chat-area">
+        <div class="heading">
+            <p>Nelkeys Chat-Bot</p>
+        </div>
+
+        <div class="chat" id="chat">
+            <div class="ai-chat" id="ai-chat-template" style="display: none;">
+                <div class="ai-left">
+                    <!-- Add AI image source here -->
+                    <img src="assets/pngegg.png" alt="AI Image">
+                </div>
+
+                <div class="ai-right">
+                    <p class="ai-message"></p>
+                </div>
+            </div>
+
+            <div class="user-chat" id="user-chat-template" style="display: none;">
+                <div class="user-left">
+                    <!-- Add user image source here -->
+                    <img src="assets/vecteezy_happy-young-man-smiling_24095208.png" alt="User Image">
+                </div>
+
+                <div class="user-right">
+                    <p class="user-message">hello dear, i ove yuhello dear, i ove yuhello dear, i ove yuhello dear, i
+                        ove yu</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <form id="chat-form">
+            <textarea id="user-prompt" placeholder="Message Nelkeys AI Chat-Bot"></textarea>
+            <button type="submit"><i class='bx bx-paper-plane'></i></button>
+        </form>
+    </footer>
+    ;
+    <script>
+        document.getElementById('chat-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const userMessage = document.getElementById('user-prompt').value;
+            if (userMessage.trim() === '') return;
+
+            displayUserMessage(userMessage);
+            document.getElementById('user-prompt').value = '';
+
+            const aiMessage = await getAIResponse(userMessage);
+            displayAIMessage(aiMessage);
+        });
+
+        function displayUserMessage(message) {
+            const userChatTemplate = document.getElementById('user-chat-template').cloneNode(true);
+            userChatTemplate.style.display = 'block';
+            userChatTemplate.querySelector('.user-message').textContent = message;
+            document.getElementById('chat').appendChild(userChatTemplate);
+        }
+
+        function displayAIMessage(message) {
+            const aiChatTemplate = document.getElementById('ai-chat-template').cloneNode(true);
+            aiChatTemplate.style.display = 'block';
+            aiChatTemplate.querySelector('.ai-message').textContent = message;
+            document.getElementById('chat').appendChild(aiChatTemplate);
+        }
+
+
+
+        async function getAIResponse(userMessage) {
+            try {
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer sk-proj-Rdd9L7FzJMqCYO6KQye2T3BlbkFJeSg4b0vq2f7PcBKVMSUc`
+                    },
+                    body: JSON.stringify({
+                        "model": "gpt-3.5-turbo",
+                        "messages": [{ "role": "user", "content": userMessage }],
+                        "temperature": 0.7
+                    })
+                });
+                if (!response.ok) {
+                    const data = await response.json();
+                    //console.error(`Network response was not ok: ${JSON.stringify(data)}`);
+                    return data.error.message
+                }
+
+                const data = await response.json();
+                return data.choices[0].text.trim();
+            } catch (error) {
+                console.error('Error:', error);
+                return 'Sorry, something went wrong. Please try again later.';
+            }
+        }
+    </script>
+</body>
+
+</html>

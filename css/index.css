@@ -1,0 +1,17 @@
+@import url(../css/general/style.css) all;
+
+
+
+
+
+
+.chat-area{
+    padding: 2em 0;
+    margin: 0 0 4em 0;
+    width: 100vw;
+}
+.chat-area .heading{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
